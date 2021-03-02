@@ -23,12 +23,12 @@ plugins {
 }
 
 group = 'dhhiego'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '15'
 
 bootJar {
 	baseName = 'aws_project01'
-	version = '1.0.0'
+	version = '1.0.1'
 }
 task unpack(type: Copy) {
 	dependsOn bootJar
