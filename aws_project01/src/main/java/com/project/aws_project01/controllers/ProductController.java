@@ -1,8 +1,10 @@
 package com.project.aws_project01.controllers;
 
+import com.project.aws_project01.enums.EventType;
 import com.project.aws_project01.models.Product;
 import com.project.aws_project01.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.project.aws_project01.services.ProductPublisher;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,15 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private ProductRepository productRepository;
-
-    @Autowired
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private final ProductRepository productRepository;
+    private final ProductPublisher productPublisher;
 
     @GetMapping
     public Iterable<Product> findAll() {
@@ -37,7 +36,7 @@ public class ProductController {
     public ResponseEntity<Product> saveProduct(
             @RequestBody Product product) {
         Product productCreated = productRepository.save(product);
-
+        productPublisher.publishProductEvent(productCreated, EventType.PRODUCT_CREATED, "admin");
         return new ResponseEntity<Product>(productCreated,
                 HttpStatus.CREATED);
     }
@@ -48,6 +47,7 @@ public class ProductController {
         if (productRepository.existsById(id)) {
             product.setId(id);
             Product productUpdated = productRepository.save(product);
+            productPublisher.publishProductEvent(productUpdated, EventType.PRODUCT_UPDATED, "admin");
             return new ResponseEntity<Product>(productUpdated, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -60,6 +60,7 @@ public class ProductController {
         if (optProduct.isPresent()) {
             Product product = optProduct.get();
             productRepository.delete(product);
+            productPublisher.publishProductEvent(product, EventType.PRODUCT_DELETED, "admin");
             return new ResponseEntity<Product>(product, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
