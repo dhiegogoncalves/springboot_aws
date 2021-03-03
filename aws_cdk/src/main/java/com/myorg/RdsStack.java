@@ -2,8 +2,6 @@ package com.myorg;
 
 import java.util.Collections;
 
-import javax.xml.crypto.Data;
-
 import software.amazon.awscdk.core.CfnOutput;
 import software.amazon.awscdk.core.CfnParameter;
 import software.amazon.awscdk.core.Construct;
