@@ -8,12 +8,12 @@ It is a [Maven](https://maven.apache.org/) based project, so you can open this p
 
 ## Useful commands
 
-- `mvn package` compile and run tests
-- `cdk ls` list all stacks in the app
-- `cdk synth` emits the synthesized CloudFormation template
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk docs` open CDK documentation
+-   `mvn package` compile and run tests
+-   `cdk ls` list all stacks in the app
+-   `cdk synth` emits the synthesized CloudFormation template
+-   `cdk deploy` deploy this stack to your default AWS account/region
+-   `cdk diff` compare deployed stack with current state
+-   `cdk docs` open CDK documentation
 
 Enjoy!
 
@@ -23,3 +23,5 @@ AWS CLI -> aws configure --profile user
 install cdk -> npm install -g aws-cdk
 check version -> cdk --version
 create project -> cdk init app --language java
+
+cdk deploy --parameters Rds:databasePassword= Rds Service01
