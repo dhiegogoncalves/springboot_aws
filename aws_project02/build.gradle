@@ -27,8 +27,8 @@ version = '1.0.0'
 sourceCompatibility = '11'
 
 bootJar {
-	baseName = 'aws_project01'
-	version = '1.2.0'
+	baseName = 'aws_project02'
+	version = '1.0.0'
 }
 task unpack(type: Copy) {
 	dependsOn bootJar
@@ -53,15 +53,12 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	compile group: 'com.amazonaws', name: 'aws-java-sdk-sns', version: '1.11.960'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	runtimeOnly 'mysql:mysql-connector-java'
 }
 
 test {
