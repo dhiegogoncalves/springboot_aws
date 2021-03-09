@@ -1,6 +1,7 @@
 package com.project.aws_project01.services;
 
 import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.model.PublishResult;
 import com.amazonaws.services.sns.model.Topic;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.aws_project01.enums.EventType;
@@ -25,20 +26,19 @@ public class ProductPublisher {
     private final ObjectMapper objectMapper;
 
     public void publishProductEvent(Product product, EventType eventType, String username) {
-        ProductEvent productEvent = ProductEvent.builder()
-                .productId(product.getId())
-                .code(product.getCode())
-                .username(username)
-                .build();
+        ProductEvent productEvent = ProductEvent.builder().productId(product.getId()).code(product.getCode())
+                .username(username).build();
 
         Envelope envelope = Envelope.builder().eventType(eventType).build();
 
         try {
             envelope.setData(objectMapper.writeValueAsString(productEvent));
 
-            snsClient.publish(
-                    productEventsTopic.getTopicArn(),
+            PublishResult publishResult = snsClient.publish(productEventsTopic.getTopicArn(),
                     objectMapper.writeValueAsString(envelope));
+
+            log.info("Product event set - Event: {} - ProductId: {} - MessageId: {}", envelope.getEventType(),
+                    productEvent.getProductId(), publishResult.getMessageId());
 
         } catch (Exception ex) {
             log.error("Failed to create product event message");

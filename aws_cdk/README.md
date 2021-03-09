@@ -24,4 +24,6 @@ install cdk -> npm install -g aws-cdk
 check version -> cdk --version
 create project -> cdk init app --language java
 
-cdk deploy --parameters Rds:databasePassword= Rds Service01
+cdk deploy --parameters Rds:databasePassword=SE8R3t_k3y Vpc Rds Sns Sqs Service01 Service02 --profile dhiegodev
+
+cdk destroy Vpc Rds Sns Sqs Service01 Service02

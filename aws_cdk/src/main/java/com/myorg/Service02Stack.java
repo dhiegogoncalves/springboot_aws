@@ -19,23 +19,26 @@ import software.amazon.awscdk.services.ecs.patterns.ApplicationLoadBalancedFarga
 import software.amazon.awscdk.services.ecs.patterns.ApplicationLoadBalancedTaskImageOptions;
 import software.amazon.awscdk.services.elasticloadbalancingv2.HealthCheck;
 import software.amazon.awscdk.services.logs.LogGroup;
+import software.amazon.awscdk.services.sqs.Queue;
 
 public class Service02Stack extends Stack {
-    public Service02Stack(final Construct scope, final String id, Cluster cluster) {
-        this(scope, id, null, cluster);
+    public Service02Stack(final Construct scope, final String id, Cluster cluster, Queue productEventsQueue) {
+        this(scope, id, null, cluster, productEventsQueue);
     }
 
-    public Service02Stack(final Construct scope, final String id, final StackProps props, Cluster cluster) {
+    public Service02Stack(final Construct scope, final String id, final StackProps props, Cluster cluster,
+            Queue productEventsQueue) {
         super(scope, id, props);
 
         Map<String, String> envVariables = new HashMap<>();
         envVariables.put("AWS_REGION", "us-east-1");
+        envVariables.put("AWS_SQS_QUEUE_PRODUCT_EVENTS_NAME", productEventsQueue.getQueueName());
 
         ApplicationLoadBalancedFargateService service02 = ApplicationLoadBalancedFargateService.Builder
                 .create(this, "ALB02").serviceName("service-02").cluster(cluster).cpu(512).memoryLimitMiB(1024)
                 .desiredCount(2).listenerPort(9090)
                 .taskImageOptions(ApplicationLoadBalancedTaskImageOptions.builder().containerName("aws_project02")
-                        .image(ContainerImage.fromRegistry("dhhiego/aws_project02:1.0.0")).containerPort(9090)
+                        .image(ContainerImage.fromRegistry("dhhiego/aws_project02:1.1.2")).containerPort(9090)
                         .logDriver(LogDriver.awsLogs(AwsLogDriverProps.builder()
                                 .logGroup(LogGroup.Builder.create(this, "Service02LogGroup").logGroupName("Service02")
                                         .removalPolicy(RemovalPolicy.DESTROY).build())
@@ -52,5 +55,7 @@ public class Service02Stack extends Stack {
         scalableTaskCount.scaleOnCpuUtilization("Service02AutoScaling",
                 CpuUtilizationScalingProps.builder().targetUtilizationPercent(50).scaleInCooldown(Duration.seconds(60))
                         .scaleOutCooldown(Duration.seconds(60)).build());
+
+        productEventsQueue.grantConsumeMessages(service02.getTaskDefinition().getTaskRole());
     }
 }

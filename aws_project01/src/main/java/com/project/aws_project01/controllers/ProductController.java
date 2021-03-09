@@ -27,23 +27,19 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> findById(@PathVariable long id) {
         Optional<Product> optProduct = productRepository.findById(id);
-        return optProduct
-                .map(product -> new ResponseEntity<>(product, HttpStatus.OK))
+        return optProduct.map(product -> new ResponseEntity<>(product, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public ResponseEntity<Product> saveProduct(
-            @RequestBody Product product) {
+    public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
         Product productCreated = productRepository.save(product);
         productPublisher.publishProductEvent(productCreated, EventType.PRODUCT_CREATED, "admin");
-        return new ResponseEntity<Product>(productCreated,
-                HttpStatus.CREATED);
+        return new ResponseEntity<Product>(productCreated, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Product> updateProduct(
-            @RequestBody Product product, @PathVariable("id") long id) {
+    public ResponseEntity<Product> updateProduct(@RequestBody Product product, @PathVariable("id") long id) {
         if (productRepository.existsById(id)) {
             product.setId(id);
             Product productUpdated = productRepository.save(product);
@@ -70,8 +66,7 @@ public class ProductController {
     @GetMapping(path = "/bycode")
     public ResponseEntity<Product> findByCode(@RequestParam String code) {
         Optional<Product> optProduct = productRepository.findByCode(code);
-        return optProduct
-                .map(product -> new ResponseEntity<>(product, HttpStatus.OK))
+        return optProduct.map(product -> new ResponseEntity<>(product, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

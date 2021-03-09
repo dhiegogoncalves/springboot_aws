@@ -28,7 +28,7 @@ sourceCompatibility = '11'
 
 bootJar {
 	baseName = 'aws_project02'
-	version = '1.0.0'
+	version = '1.1.2'
 }
 task unpack(type: Copy) {
 	dependsOn bootJar
@@ -52,9 +52,14 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
+dependencies {    
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-sqs', version: '1.11.970'
+    compile group: 'org.springframework', name: 'spring-jms', version: '5.3.4'
+    compile group: 'com.amazonaws', name: 'amazon-sqs-java-messaging-lib', version: '1.0.8' 
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'

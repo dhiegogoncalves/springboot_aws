@@ -6,11 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"code"})
-        }
-)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }) })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

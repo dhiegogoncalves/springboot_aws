@@ -1,4 +1,4 @@
-package com.project.aws_project01.enums;
+package com.project.aws_project02.enums;
 
 public enum EventType {
     PRODUCT_CREATED, PRODUCT_UPDATED, PRODUCT_DELETED
