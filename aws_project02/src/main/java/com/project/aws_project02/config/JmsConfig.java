@@ -4,7 +4,10 @@ import javax.jms.Session;
 
 import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +21,12 @@ import org.springframework.jms.support.destination.DynamicDestinationResolver;
 @EnableJms
 public class JmsConfig {
 
+    @Value("${spring.profiles.active}")
+    private String springProfilesActive;
+
+    @Value("${aws.endpoint}")
+    private String awsEndpoint;
+
     @Value("${aws.region}")
     private String awsRegion;
 
@@ -25,8 +34,17 @@ public class JmsConfig {
 
     @Bean
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
-        sqsConnectionFactory = new SQSConnectionFactory(new ProviderConfiguration(), AmazonSQSClientBuilder.standard()
-                .withRegion(awsRegion).withCredentials(new DefaultAWSCredentialsProviderChain()).build());
+        if (springProfilesActive.equals("dev")) {
+            sqsConnectionFactory = new SQSConnectionFactory(new ProviderConfiguration(),
+                    AmazonSQSClientBuilder.standard()
+                            .withEndpointConfiguration(
+                                    new AwsClientBuilder.EndpointConfiguration(awsEndpoint, awsRegion))
+                            .withCredentials(new DefaultAWSCredentialsProviderChain()).build());
+        } else {
+            sqsConnectionFactory = new SQSConnectionFactory(new ProviderConfiguration(),
+                    AmazonSQSClientBuilder.standard().withRegion(awsRegion)
+                            .withCredentials(new DefaultAWSCredentialsProviderChain()).build());
+        }
 
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(sqsConnectionFactory);

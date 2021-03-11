@@ -28,7 +28,7 @@ sourceCompatibility = '11'
 
 bootJar {
 	baseName = 'aws_project01'
-	version = '1.2.1'
+	version = '1.4.0'
 }
 task unpack(type: Copy) {
 	dependsOn bootJar
@@ -56,12 +56,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.2'
+
 	compile group: 'com.amazonaws', name: 'aws-java-sdk-sns', version: '1.11.960'
+
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	runtimeOnly 'mysql:mysql-connector-java'
+	
 }
 
 test {

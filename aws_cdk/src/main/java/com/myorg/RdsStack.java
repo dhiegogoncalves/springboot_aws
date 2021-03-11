@@ -21,8 +21,8 @@ import software.amazon.awscdk.services.rds.Credentials;
 import software.amazon.awscdk.services.rds.CredentialsFromUsernameOptions;
 import software.amazon.awscdk.services.rds.DatabaseInstance;
 import software.amazon.awscdk.services.rds.DatabaseInstanceEngine;
-import software.amazon.awscdk.services.rds.MySqlInstanceEngineProps;
-import software.amazon.awscdk.services.rds.MysqlEngineVersion;
+import software.amazon.awscdk.services.rds.MariaDbEngineVersion;
+import software.amazon.awscdk.services.rds.MariaDbInstanceEngineProps;
 
 public class RdsStack extends Stack {
     public RdsStack(final Construct scope, final String id, Vpc vpc) {
@@ -40,8 +40,8 @@ public class RdsStack extends Stack {
 
         DatabaseInstance databaseInstance = DatabaseInstance.Builder.create(this, "Rds01")
                 .instanceIdentifier("aws-project01-db")
-                .engine(DatabaseInstanceEngine
-                        .mysql(MySqlInstanceEngineProps.builder().version(MysqlEngineVersion.VER_5_6).build()))
+                .engine(DatabaseInstanceEngine.mariaDb(
+                        MariaDbInstanceEngineProps.builder().version(MariaDbEngineVersion.VER_10_4_13).build()))
                 .vpc(vpc)
                 .credentials(Credentials.fromUsername("admin",
                         CredentialsFromUsernameOptions.builder()

@@ -28,7 +28,7 @@ sourceCompatibility = '11'
 
 bootJar {
 	baseName = 'aws_project02'
-	version = '1.1.2'
+	version = '1.4.0'
 }
 task unpack(type: Copy) {
 	dependsOn bootJar
@@ -60,8 +60,10 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-jms', version: '5.3.4'
     compile group: 'com.amazonaws', name: 'amazon-sqs-java-messaging-lib', version: '1.0.8' 
 
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.970'
+    implementation group: 'io.github.boostchicken', name: 'spring-data-dynamodb', version: '5.2.5'
+
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

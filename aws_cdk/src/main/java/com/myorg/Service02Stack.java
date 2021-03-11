@@ -9,6 +9,7 @@ import software.amazon.awscdk.core.RemovalPolicy;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.applicationautoscaling.EnableScalingProps;
+import software.amazon.awscdk.services.dynamodb.Table;
 import software.amazon.awscdk.services.ecs.AwsLogDriverProps;
 import software.amazon.awscdk.services.ecs.Cluster;
 import software.amazon.awscdk.services.ecs.ContainerImage;
@@ -22,12 +23,13 @@ import software.amazon.awscdk.services.logs.LogGroup;
 import software.amazon.awscdk.services.sqs.Queue;
 
 public class Service02Stack extends Stack {
-    public Service02Stack(final Construct scope, final String id, Cluster cluster, Queue productEventsQueue) {
-        this(scope, id, null, cluster, productEventsQueue);
+    public Service02Stack(final Construct scope, final String id, Cluster cluster, Queue productEventsQueue,
+            Table productEventsDynamoDB) {
+        this(scope, id, null, cluster, productEventsQueue, productEventsDynamoDB);
     }
 
     public Service02Stack(final Construct scope, final String id, final StackProps props, Cluster cluster,
-            Queue productEventsQueue) {
+            Queue productEventsQueue, Table productEventsDynamoDB) {
         super(scope, id, props);
 
         Map<String, String> envVariables = new HashMap<>();
@@ -36,9 +38,9 @@ public class Service02Stack extends Stack {
 
         ApplicationLoadBalancedFargateService service02 = ApplicationLoadBalancedFargateService.Builder
                 .create(this, "ALB02").serviceName("service-02").cluster(cluster).cpu(512).memoryLimitMiB(1024)
-                .desiredCount(2).listenerPort(9090)
+                .desiredCount(2).listenerPort(9091)
                 .taskImageOptions(ApplicationLoadBalancedTaskImageOptions.builder().containerName("aws_project02")
-                        .image(ContainerImage.fromRegistry("dhhiego/aws_project02:1.1.2")).containerPort(9090)
+                        .image(ContainerImage.fromRegistry("dhhiego/aws_project02:1.4.0")).containerPort(9091)
                         .logDriver(LogDriver.awsLogs(AwsLogDriverProps.builder()
                                 .logGroup(LogGroup.Builder.create(this, "Service02LogGroup").logGroupName("Service02")
                                         .removalPolicy(RemovalPolicy.DESTROY).build())
@@ -47,7 +49,7 @@ public class Service02Stack extends Stack {
                 .publicLoadBalancer(true).build();
 
         service02.getTargetGroup().configureHealthCheck(
-                new HealthCheck.Builder().path("/actuator/health").port("9090").healthyHttpCodes("200").build());
+                new HealthCheck.Builder().path("/actuator/health").port("9091").healthyHttpCodes("200").build());
 
         ScalableTaskCount scalableTaskCount = service02.getService()
                 .autoScaleTaskCount(EnableScalingProps.builder().minCapacity(2).maxCapacity(4).build());
@@ -57,5 +59,6 @@ public class Service02Stack extends Stack {
                         .scaleOutCooldown(Duration.seconds(60)).build());
 
         productEventsQueue.grantConsumeMessages(service02.getTaskDefinition().getTaskRole());
+        productEventsDynamoDB.grantReadWriteData(service02.getTaskDefinition().getTaskRole());
     }
 }

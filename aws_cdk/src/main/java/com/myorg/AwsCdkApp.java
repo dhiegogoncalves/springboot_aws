@@ -23,6 +23,8 @@ public class AwsCdkApp {
         SqsStack sqsStack = new SqsStack(app, "Sqs", snsStack.getProducEventsTopic());
         sqsStack.addDependency(snsStack);
 
+        DynamoDBStack dynamoDBStack = new DynamoDBStack(app, "DynamoDB");
+
         Service01Stack service01Stack = new Service01Stack(app, "Service01", clusterStack.getCluster(),
                 snsStack.getProducEventsTopic());
         service01Stack.addDependency(clusterStack);
@@ -30,9 +32,10 @@ public class AwsCdkApp {
         service01Stack.addDependency(snsStack);
 
         Service02Stack service02Stack = new Service02Stack(app, "Service02", clusterStack.getCluster(),
-                sqsStack.getProductEventsQueue());
+                sqsStack.getProductEventsQueue(), dynamoDBStack.getProductEventsDynamoDB());
         service02Stack.addDependency(clusterStack);
         service02Stack.addDependency(sqsStack);
+        service02Stack.addDependency(dynamoDBStack);
 
         app.synth();
     }
