@@ -1,19 +1,18 @@
 package com.project.aws_project01.config;
 
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.AmazonSNSClientBuilder;
-import com.amazonaws.services.sns.model.Topic;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SnsConfig {
+public class S3Config {
 
     @Value("${spring.profiles.active}")
     private String springProfilesActive;
@@ -24,22 +23,23 @@ public class SnsConfig {
     @Value("${aws.region}")
     private String awsRegion;
 
-    @Value("${aws.sns.topic.product.events.arn}")
-    private String productEventsTopic;
+    @Value("${aws.access.key.id}")
+    private String awsAccessKeyId;
+
+    @Value("${aws.secret.access.key}")
+    private String awsSecretAccessKey;
 
     @Bean
-    public AmazonSNS snsClient() {
+    public AmazonS3 amazonS3Client() {
         if (springProfilesActive.equals("dev")) {
-            return AmazonSNSClientBuilder.standard()
+            return AmazonS3ClientBuilder.standard()
                     .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(awsEndpoint, awsRegion))
-                    .withCredentials(new DefaultAWSCredentialsProviderChain()).build();
+                    .withCredentials(new AWSStaticCredentialsProvider(
+                            new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey)))
+                    .build();
         }
-        return AmazonSNSClientBuilder.standard().withRegion(awsRegion)
-                .withCredentials(new DefaultAWSCredentialsProviderChain()).build();
-    }
 
-    @Bean(name = "productEventsTopic")
-    public Topic snsProductEventsTopic() {
-        return new Topic().withTopicArn(productEventsTopic);
+        return AmazonS3ClientBuilder.standard().withRegion(awsRegion)
+                .withCredentials(new DefaultAWSCredentialsProviderChain()).build();
     }
 }

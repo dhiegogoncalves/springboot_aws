@@ -5,6 +5,7 @@ import java.util.Collections;
 import software.amazon.awscdk.core.CfnOutput;
 import software.amazon.awscdk.core.CfnParameter;
 import software.amazon.awscdk.core.Construct;
+import software.amazon.awscdk.core.RemovalPolicy;
 import software.amazon.awscdk.core.SecretValue;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
@@ -48,7 +49,8 @@ public class RdsStack extends Stack {
                                 .password(SecretValue.plainText(databasePassword.getValueAsString())).build()))
                 .instanceType(InstanceType.of(InstanceClass.BURSTABLE2, InstanceSize.MICRO)).multiAz(false)
                 .allocatedStorage(10).securityGroups(Collections.singletonList(iSecurityGroup))
-                .vpcSubnets(SubnetSelection.builder().subnets(vpc.getPrivateSubnets()).build()).build();
+                .vpcSubnets(SubnetSelection.builder().subnets(vpc.getPrivateSubnets()).build())
+                .removalPolicy(RemovalPolicy.DESTROY).build();
 
         CfnOutput.Builder.create(this, "rds-endpoint").exportName("rds-endpoint")
                 .value(databaseInstance.getDbInstanceEndpointAddress()).build();

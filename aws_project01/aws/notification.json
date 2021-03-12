@@ -1,0 +1,8 @@
+{
+    "TopicConfigurations": [
+        {
+            "TopicArn": "arn:aws:sns:us-east-1:000000000000:s3-invoice-events",
+            "Events": ["s3:ObjectCreated:*"]
+        }
+    ]
+}

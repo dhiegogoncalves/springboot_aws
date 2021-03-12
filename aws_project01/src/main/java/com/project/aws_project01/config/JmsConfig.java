@@ -1,4 +1,4 @@
-package com.project.aws_project02.config;
+package com.project.aws_project01.config;
 
 import javax.jms.Session;
 

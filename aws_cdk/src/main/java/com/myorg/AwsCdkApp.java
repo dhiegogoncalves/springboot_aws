@@ -25,11 +25,14 @@ public class AwsCdkApp {
 
         DynamoDBStack dynamoDBStack = new DynamoDBStack(app, "DynamoDB");
 
+        InvoiceAppStack invoiceAppStack = new InvoiceAppStack(app, "InvoiceApp");
+
         Service01Stack service01Stack = new Service01Stack(app, "Service01", clusterStack.getCluster(),
-                snsStack.getProducEventsTopic());
+                snsStack.getProducEventsTopic(), invoiceAppStack.getBucket(), invoiceAppStack.getS3InvoiceQueue());
         service01Stack.addDependency(clusterStack);
         service01Stack.addDependency(rdsStack);
         service01Stack.addDependency(snsStack);
+        service01Stack.addDependency(invoiceAppStack);
 
         Service02Stack service02Stack = new Service02Stack(app, "Service02", clusterStack.getCluster(),
                 sqsStack.getProductEventsQueue(), dynamoDBStack.getProductEventsDynamoDB());

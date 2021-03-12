@@ -38,9 +38,9 @@ public class Service02Stack extends Stack {
 
         ApplicationLoadBalancedFargateService service02 = ApplicationLoadBalancedFargateService.Builder
                 .create(this, "ALB02").serviceName("service-02").cluster(cluster).cpu(512).memoryLimitMiB(1024)
-                .desiredCount(2).listenerPort(9091)
+                .desiredCount(2).listenerPort(9090)
                 .taskImageOptions(ApplicationLoadBalancedTaskImageOptions.builder().containerName("aws_project02")
-                        .image(ContainerImage.fromRegistry("dhhiego/aws_project02:1.4.0")).containerPort(9091)
+                        .image(ContainerImage.fromRegistry("dhhiego/aws_project02:1.5.0")).containerPort(9090)
                         .logDriver(LogDriver.awsLogs(AwsLogDriverProps.builder()
                                 .logGroup(LogGroup.Builder.create(this, "Service02LogGroup").logGroupName("Service02")
                                         .removalPolicy(RemovalPolicy.DESTROY).build())
@@ -49,7 +49,7 @@ public class Service02Stack extends Stack {
                 .publicLoadBalancer(true).build();
 
         service02.getTargetGroup().configureHealthCheck(
-                new HealthCheck.Builder().path("/actuator/health").port("9091").healthyHttpCodes("200").build());
+                new HealthCheck.Builder().path("/actuator/health").port("9090").healthyHttpCodes("200").build());
 
         ScalableTaskCount scalableTaskCount = service02.getService()
                 .autoScaleTaskCount(EnableScalingProps.builder().minCapacity(2).maxCapacity(4).build());

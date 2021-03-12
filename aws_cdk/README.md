@@ -24,6 +24,6 @@ install cdk -> npm install -g aws-cdk
 check version -> cdk --version
 create project -> cdk init app --language java
 
-cdk deploy --parameters Rds:databasePassword=SE8R3t_k3y Vpc Cluster Rds Sns Sqs DynamoDB Service01 Service02 --profile default
+cdk deploy --parameters Rds:databasePassword=SE8R3t_k3y Vpc Cluster Rds Sns Sqs DynamoDB InvoiceApp Service01 Service02 --profile default
 
-cdk destroy Vpc Cluster Rds Sns Sqs DynamoDB Service01 Service02 --profile default
+cdk destroy Vpc Cluster Rds Sns Sqs DynamoDB InvoiceApp Service01 Service02 --profile default
